@@ -4,6 +4,7 @@
 """
 
 import wpilib
+import ctre
 
 class MyRobot(wpilib.IterativeRobot):
     
@@ -12,12 +13,12 @@ class MyRobot(wpilib.IterativeRobot):
         This function is called upon program startup and
         should be used for any initialization code.
         """
-        l_motor = wpilib.Spark(1)
-        l_motor.setInverted(True)
-        r_motor = wpilib.Jaguar(0)
-        r_motor.setInverted(True)
+        self.l_motor = ctre.CANTalon(2)
+        self.l_motor.setInverted(True)
+        self.r_motor = ctre.CANTalon(3)
+        self.r_motor.setInverted(True)
         self.stick = wpilib.Joystick(0)
-        self.drive = wpilib.RobotDrive(l_motor, r_motor)
+        self.drive = wpilib.RobotDrive(self.l_motor, self.r_motor)
         self.counter = 0
 
 
@@ -35,7 +36,8 @@ class MyRobot(wpilib.IterativeRobot):
 
     def teleopPeriodic(self):
         """This function is called periodically during operator control."""
-        self.drive.arcadeDrive(self.stick)
+        #self.drive.arcadeDrive(self.stick)
+        self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
         self.counter += 1
         if self.counter % 90 == 0:
             print(self.counter)
