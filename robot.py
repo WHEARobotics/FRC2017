@@ -37,6 +37,7 @@ class MyRobot(wpilib.IterativeRobot):
     def teleopPeriodic(self):
         """This function is called periodically during operator control."""
         #self.drive.arcadeDrive(self.stick)
+        # XBox controller: axis 1 = left Y, axis 5 = right Y
         self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
         self.counter += 1
         if self.counter % 90 == 0:
