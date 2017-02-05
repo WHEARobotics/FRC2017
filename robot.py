@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-    This is a good foundation to build your robot code on.
+    WHEA Robotics 3881 code for FRC 2017.
 """
 
 import wpilib
