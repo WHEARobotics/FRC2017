@@ -15,13 +15,13 @@ class MyRobot(wpilib.IterativeRobot):
         should be used for any initialization code.
         """
         # Configure shooter motor controller.
-#        self.shooter = ctre.CANTalon(1) # Create a CANTalon object.
-#        self.shooter.setFeedbackDevice(ctre.CANTalon.FeedbackDevice.QuadEncoder) # Choose an encoder as a feedback device.  The default should be QuadEncoder already, but might as well make sure.
+        self.shooter = ctre.CANTalon(1) # Create a CANTalon object.
+        self.shooter.setFeedbackDevice(ctre.CANTalon.FeedbackDevice.QuadEncoder) # Choose an encoder as a feedback device.  The default should be QuadEncoder already, but might as well make sure.
         # I thought the encoder was 20 pulses per revolution per phase, which would require "80" as an argument below, but after trying it, it looks like there are 12.
         # Setting this parameter changes things so getPosition() returns decimal revolutions, and getSpeed() returns RPM.
-#        self.shooter.configEncoderCodesPerRev(48)
-        # Rod tried zeroing the sensor position (below) briefly and got an error, so it needs to be investigated.
-        #self.shooter.setSensorPosition(0)
+        self.shooter.configEncoderCodesPerRev(48)
+        # resets shooter position on startup
+        self.shooter.setPosition(0)
 #        self.shooter.enableBrakeMode(False) # This should change between brake and coast modes.
         
         self.l_motor = ctre.CANTalon(2)
@@ -43,7 +43,8 @@ class MyRobot(wpilib.IterativeRobot):
 
 
     def teleopInit(self):
-        pass
+        #resets printed shooter position on enable
+        self.shooter.setPosition(0)
 
     def teleopPeriodic(self):
         """This function is called periodically during operator control."""
@@ -51,14 +52,14 @@ class MyRobot(wpilib.IterativeRobot):
         # XBox controller: axis 1 = left Y, axis 5 = right Y
         self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
         
-        # Section to run the shooter at -10% to +10% full voltage, depending on the left X axis (axis 0).
-#        self.shooter.set(self.stick.getRawAxis(0)*0.1)
+        # Section to run the shooter at 0% to +10% full voltage, shooter axis(2), left trigger
+        self.shooter.set(self.stick.getRawAxis(2)*0.1)
         
         self.counter += 1
         if self.counter % 90 == 0:
             # Uncomment whichever line you want to use.  Need to have a shooter to use the second one.
-            print(self.counter)
-#            print(self.counter, 'axis: ', self.stick.getRawAxis(0), ' pos: ', self.shooter.getPosition(), ' rpm: ', self.shooter.getSpeed())
+         #   print(self.counter)
+            print(self.counter, 'axis: ', self.stick.getRawAxis(2), ' pos: ', self.shooter.getPosition(), ' rpm: ', self.shooter.getSpeed())
 
 
     def testPeriodic(self):
