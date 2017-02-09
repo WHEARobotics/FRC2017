@@ -1,0 +1,4 @@
+
+tests/\.cache/v/cache/
+
+tests/__pycache__/
