@@ -22,7 +22,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.shooter.configEncoderCodesPerRev(48)
         # resets shooter position on startup
         self.shooter.setPosition(0)
-#        self.shooter.enableBrakeMode(False) # This should change between brake and coast modes.
+        self.shooter.enableBrakeMode(False) # This should change between brake and coast modes.
         
         self.l_motor = ctre.CANTalon(2)
         self.l_motor.setInverted(True)
@@ -48,7 +48,7 @@ class MyRobot(wpilib.IterativeRobot):
 
     def teleopPeriodic(self):
         """This function is called periodically during operator control."""
-        self.drive.arcadeDrive(self.stick)
+       # self.drive.arcadeDrive(self.stick)
         # XBox controller: axis 1 = left Y, axis 5 = right Y
         self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
         
