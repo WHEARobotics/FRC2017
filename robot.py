@@ -39,6 +39,28 @@ class MyRobot(wpilib.IterativeRobot):
 
     def autonomousPeriodic(self):
         """This function is called periodically during autonomous."""
+        """
+        Programmer: Jun Hyung Lee
+        Date: 2/9/17
+        Description: The code below is unfinished, and purely experimental. Right now, it's set so that the robot drives forward and shoots
+        balls into the goal. I'm unsure whether we'll have to rotate the robot before making a shot. :\
+        """
+        self.auto_loop_counter = 0
+        #50 loops is equal to one second
+        if self.auto_loop_counter < 100:
+            self.robot_drive.drive(1, 0) #Drives forward at full speed 
+            self.auto_loop_counter += 1
+        else:
+            self.robot_drive.drive(0, 0) #Stops the robot from moving forward
+            auto_loop_counter_ = 0 
+        if self.auto_loop_counter <50:
+            self.shooter.setPosition(x) #I'm unsure about what value I should put in place of "x". Could I get some clarification on the parameters of the function?
+            Shoot() #Shoot() would be a pre-defined function which would fire a ball from the shooter.
+            self.auto_loop_counter += 1
+        else:
+            self.auto_loop_counter = 0
+        #break
+            #this isn't working, error says break is out of loop. Just fyi. -Hunter
         pass
 
 
