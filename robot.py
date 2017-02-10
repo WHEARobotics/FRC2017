@@ -36,6 +36,7 @@ class MyRobot(wpilib.IterativeRobot):
     def autonomousInit(self):
         """This function is run once each time the robot enters autonomous mode."""
         self.auto_loop_counter = 0
+        self.shooter.setPosition(0)
 
     def autonomousPeriodic(self):
         """This function is called periodically during autonomous."""
@@ -61,7 +62,6 @@ class MyRobot(wpilib.IterativeRobot):
 #This is the error I recived when I tried testing it without the shooter code, again just an fyi. -Hunter
 
         if self.auto_loop_counter <50:
-            self.shooter.setPosition(x) #I'm unsure about what value I should put in place of "x". Could I get some clarification on the parameters of the function?
             Shoot() #Shoot() would be a pre-defined function which would fire a ball from the shooter.
             self.auto_loop_counter += 1
         else:
@@ -83,7 +83,17 @@ class MyRobot(wpilib.IterativeRobot):
         
         # Section to run the shooter at 0% to +10% full voltage, shooter axis(2), left trigger
         self.shooter.set(self.stick.getRawAxis(2)*0.1)
-        
+        #Here is the code Rod wanted to have us test -Hunter
+        #self.shooter.set(self.stick.getRawAxis(3)*0.2)
+        #(1)The above code works perfectly
+        #self.shooter.set((self.stick.getRawButton(1)*0.2) , (self.stick.getRawButton(2)*0.1))
+        #(2)The above code does not work
+        #self.shooter.set(self.stick.getRawButton(1)*0.2)
+        #self.shooter.set(self.stick.getRawButton(2)*-0.1)
+        #(2)For the above code, button 2 works, but not button 1
+
+
+
         self.counter += 1
         if self.counter % 90 == 0:
             # Uncomment whichever line you want to use.  Need to have a shooter to use the second one.
