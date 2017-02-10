@@ -53,6 +53,13 @@ class MyRobot(wpilib.IterativeRobot):
         else:
             self.robot_drive.drive(0, 0) #Stops the robot from moving forward
             auto_loop_counter_ = 0 
+#WARNING : robotpy             : Robots don't quit! 
+#ERROR   : wpilib.ds           : ERROR Unhandled exception 
+#ERROR  1  ERROR Unhandled exception  /usr/local/lib/python3.6/site-packages/wpilib/_impl/main.py.134:run 
+#ERROR Unhandled exception 
+#ERROR   : robotpy             : ---> The startCompetition() method (or methods called by it) should have handled the exception. 
+#This is the error I recived when I tried testing it without the shooter code, again just an fyi. -Hunter
+
         if self.auto_loop_counter <50:
             self.shooter.setPosition(x) #I'm unsure about what value I should put in place of "x". Could I get some clarification on the parameters of the function?
             Shoot() #Shoot() would be a pre-defined function which would fire a ball from the shooter.
