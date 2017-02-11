@@ -29,6 +29,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.r_motor = ctre.CANTalon(3)
         self.r_motor.setInverted(True)
         self.stick = wpilib.Joystick(1)
+        print (self.stick.getName())
         self.drive = wpilib.RobotDrive(self.l_motor, self.r_motor)
         self.counter = 0
 
@@ -78,12 +79,12 @@ class MyRobot(wpilib.IterativeRobot):
     def teleopPeriodic(self):
         """This function is called periodically during operator control."""
         self.drive.arcadeDrive(self.stick)
-      #  XBox controller: axis 1 = left Y, axis 5 = right Y
+       #  XBox controller: axis 1 = left Y, axis 5 = right Y
        # self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
         
         # Section to run the shooter at 0% to +10% full voltage, shooter axis(2), left trigger
         #self.shooter.set(self.stick.getRawAxis(2)*0.2)
-         self.shooter.set(self.stick.getRawButton(1)*0.2)
+        self.shooter.set(self.stick.getRawButton(1)*0.2)
         #Here is the code Rod wanted to have us test -Hunter
         #self.shooter.set(self.stick.getRawAxis(3)*0.2)
         #(1)The above code works perfectly
