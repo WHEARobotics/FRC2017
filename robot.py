@@ -33,6 +33,8 @@ class MyRobot(wpilib.IterativeRobot):
         self.drive = wpilib.RobotDrive(self.l_motor, self.r_motor)
         self.counter = 0
 
+        #Section for Init Mode Function
+        self.mode = 0
 
     def autonomousInit(self):
         """This function is run once each time the robot enters autonomous mode."""
@@ -93,6 +95,24 @@ class MyRobot(wpilib.IterativeRobot):
         #self.shooter.set(self.stick.getRawButton(1)*0.2)
         #self.shooter.set(self.stick.getRawButton(2)*-0.1)
         #(2)For the above code, button 2 works, but not button 1
+
+        #Section for Mode Control
+        #Select=Drive mode, Start=Shoot mode
+        #if self.mode ==0:
+            #self.mode
+        if self.stick.getRawButton(7):
+            self.mode = 1
+
+        if self.stick.getRawButton(8):
+            self.mode = 2
+
+        if self.mode == 1:
+            self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
+        #else: self.mode ==0
+
+        if self.mode == 2:
+            self.shooter.set(self.stick.getRawAxis(2)*0.2)
+       # else: self.mode ==0
 
 
 
