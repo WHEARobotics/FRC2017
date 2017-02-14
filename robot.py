@@ -24,12 +24,12 @@ class MyRobot(wpilib.IterativeRobot):
         self.shooter.setPosition(0)
         self.shooter.enableBrakeMode(False) # This should change between brake and coast modes.
         
-        self.l_motor = ctre.CANTalon(2)
+        self.l_motor = ctre.CANTalon(3)
         self.l_motor.setInverted(True)
-        self.r_motor = ctre.CANTalon(3)
+        self.r_motor = ctre.CANTalon(2)
         self.r_motor.setInverted(True)
-        self.stick = wpilib.Joystick(1)
-        print (self.stick.getName())
+        self.stick = wpilib.Joystick(0)
+        #print (self.stick.getName())
         self.drive = wpilib.RobotDrive(self.l_motor, self.r_motor)
         self.counter = 0
 
@@ -80,13 +80,13 @@ class MyRobot(wpilib.IterativeRobot):
 
     def teleopPeriodic(self):
         """This function is called periodically during operator control."""
-        self.drive.arcadeDrive(self.stick)
+        #self.drive.arcadeDrive(self.stick)
        #  XBox controller: axis 1 = left Y, axis 5 = right Y
        # self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
         
         # Section to run the shooter at 0% to +10% full voltage, shooter axis(2), left trigger
         #self.shooter.set(self.stick.getRawAxis(2)*0.2)
-        self.shooter.set(self.stick.getRawButton(1)*0.2)
+        #self.shooter.set(self.stick.getRawButton(1)*0.2)
         #Here is the code Rod wanted to have us test -Hunter
         #self.shooter.set(self.stick.getRawAxis(3)*0.2)
         #(1)The above code works perfectly
@@ -100,18 +100,18 @@ class MyRobot(wpilib.IterativeRobot):
         #Select=Drive mode, Start=Shoot mode
         #if self.mode ==0:
             #self.mode
-        if self.stick.getRawButton(7):
+        if self.stick.getRawButton(4):
             self.mode = 1
 
-        if self.stick.getRawButton(8):
+        if self.stick.getRawButton(5):
             self.mode = 2
 
         if self.mode == 1:
-            self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
+            self.drive.tankDrive(self.stick.getRawAxis(0),self.stick.getRawAxis(0))
         #else: self.mode ==0
 
         if self.mode == 2:
-            self.shooter.set(self.stick.getRawAxis(2)*0.2)
+            self.shooter.set(self.stick.getRawButton(1)*0.2)
        # else: self.mode ==0
 
 
