@@ -95,7 +95,8 @@ class MyRobot(wpilib.IterativeRobot):
         #self.shooter.set(self.stick.getRawButton(1)*0.2)
         #self.shooter.set(self.stick.getRawButton(2)*-0.1)
         #(2)For the above code, button 2 works, but not button 1
-
+        self.stick = wpilib.Joystick(0)
+        self.stick = wpilib.Joystick(1)
         #Section for Mode Control
         #Select=Drive mode, Start=Shoot mode
         #if self.mode ==0:
@@ -107,7 +108,7 @@ class MyRobot(wpilib.IterativeRobot):
             self.mode = 2
 
         if self.mode == 1:
-            self.drive.tankDrive(self.stick.getRawAxis(0),self.stick.getRawAxis(0))
+            self.drive.tankDrive(wpilib.Joystick(0).getRawAxis(1),wpilib.Joystick(1).getRawAxis(1))
         #else: self.mode ==0
 
         if self.mode == 2:
