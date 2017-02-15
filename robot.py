@@ -29,7 +29,6 @@ class MyRobot(wpilib.IterativeRobot):
         self.r_motor = ctre.CANTalon(2)
         self.r_motor.setInverted(True)
         self.stick = wpilib.Joystick(0)
-        #print (self.stick.getName())
         self.drive = wpilib.RobotDrive(self.l_motor, self.r_motor)
         self.counter = 0
 
@@ -57,12 +56,6 @@ class MyRobot(wpilib.IterativeRobot):
         else:
             self.robot_drive.drive(0, 0) #Stops the robot from moving forward
             auto_loop_counter_ = 0 
-#WARNING : robotpy             : Robots don't quit! 
-#ERROR   : wpilib.ds           : ERROR Unhandled exception 
-#ERROR  1  ERROR Unhandled exception  /usr/local/lib/python3.6/site-packages/wpilib/_impl/main.py.134:run 
-#ERROR Unhandled exception 
-#ERROR   : robotpy             : ---> The startCompetition() method (or methods called by it) should have handled the exception. 
-#This is the error I recived when I tried testing it without the shooter code, again just an fyi. -Hunter
 
         if self.auto_loop_counter <50:
             Shoot() #Shoot() would be a pre-defined function which would fire a ball from the shooter.
@@ -80,11 +73,12 @@ class MyRobot(wpilib.IterativeRobot):
 
     def teleopPeriodic(self):
         """This function is called periodically during operator control."""
+        #Section for Drive
         #self.drive.arcadeDrive(self.stick)
-       #  XBox controller: axis 1 = left Y, axis 5 = right Y
-       # self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
-        
-        # Section to run the shooter at 0% to +10% full voltage, shooter axis(2), left trigger
+        #self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
+        """
+        #Section for Shooter
+        #Section to run the shooter at 0% to +10% full voltage, shooter axis(2), left trigger
         #self.shooter.set(self.stick.getRawAxis(2)*0.2)
         #self.shooter.set(self.stick.getRawButton(1)*0.2)
         #Here is the code Rod wanted to have us test -Hunter
@@ -95,6 +89,8 @@ class MyRobot(wpilib.IterativeRobot):
         #self.shooter.set(self.stick.getRawButton(1)*0.2)
         #self.shooter.set(self.stick.getRawButton(2)*-0.1)
         #(2)For the above code, button 2 works, but not button 1
+        """
+        #For Both Attack 3 Joysticks
         self.stick = wpilib.Joystick(0)
         self.stick = wpilib.Joystick(1)
         #Section for Mode Control
@@ -113,10 +109,9 @@ class MyRobot(wpilib.IterativeRobot):
 
         if self.mode == 2:
             self.shooter.set(self.stick.getRawButton(1)*0.2)
-       # else: self.mode ==0
+        #else: self.mode ==0
 
-
-
+        #For Encoder Printing 
         self.counter += 1
         if self.counter % 90 == 0:
             # Uncomment whichever line you want to use.  Need to have a shooter to use the second one.
