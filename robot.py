@@ -49,52 +49,33 @@ class MyRobot(wpilib.IterativeRobot):
     
 
     def autonomousPeriodic(self):
-        """This function is called periodically during autonomous.
-        Programer: Jun Hyung Lee
-        Date: 2/15/17
-        Description: This is a more updated version of the autonomous code. You're going to have to figure out what values to put in place of the 'x's.
-        """
-        #Rotate 90 degrees left
-        if self.auto_loop_counter < 50:
-            self.drive.drive(0.2,0)
-            self.auto_loop_counter += 1
-        else:
-            self.auto_loop_counter < 100
-            self.drive.drive(0, 0)
-
-        self.auto_loop_counter += 1
+        """This function is called periodically during autonomous."""
         
-        #Drive forward
-        # Check if we've completed 100 loops (approximately 2 seconds)
-        if self.auto_loop_counter < 150:
-            self.drive.drive(0.2, 0.2) 
-            self.auto_loop_counter += 1
-        else:
-            self.auto_loop_counter = 500
-            self.drive.drive(0, 0)
-          
-        """
-        #Shoots ball   
-        if self.auto_loop_counter < x:
-            self.shooter.set(x) #You're gonna have to tweak this a bit
-            self.auto_loop_counter += 1
-        else:
-            self.drive.drive.drive(0, 0)    #Stop robot
-            
-        #Rotate -90 degrees    
-        if self.auto_loop_counter < x:
-            self.drive.drive(0, -1.0)
-            self.auto_loop_counter += 1
-        else:
-            self.drive.drive.drive(0, 0)    #Stop robot
+        if self.auto_loop_counter <50:
+            self.robot_drive.drive(0,1)
 
-        #Drive forward
-        if self.auto_loop_counter < x:
-            self.drive.drive(1.0, 0) 
-            self.auto_loop_counter +=1
+        elif self.auto_loop_counter >=50 and self.auto_loop_counter <100:
+            self.robot_drive.drive(1,1)
+
+        elif self.auto_loop_counter >=100 and self.auto_loop_counter <150:
+            self.shooter.set(x)
+
+        elif self.auto_loop_counter >=200 and self.auto_loop_counter <250:
+            self.robot_drive.drive(-1,-1)
+
+        #This stops the robot at 14.5 seconds
+        #elif self.auto_loop_counter >=(725):
+            #self.robot_drive.drive(0,0)
+
         else:
-             self.drive.drive(0, 0)
-             """
+            self.robot_drive.drive(0,0)
+
+        self.auto_loop_counter +=1
+        #This counter runs 50 times a second      
+            
+            
+            
+            
 
 
     def teleopInit(self):
@@ -103,11 +84,11 @@ class MyRobot(wpilib.IterativeRobot):
         
 
     def teleopPeriodic(self):
-        """This function is called periodically during operator control."""
+    """This function is called periodically during operator control."""
         #self.drive.arcadeDrive(self.stick)
        #  XBox controller: axis 1 = left Y, axis 5 = right Y
        # self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
-        """
+        
         # Section to run the shooter at 0% to +10% full voltage, shooter axis(2), left trigger
         #self.shooter.set(self.stick.getRawAxis(2)*0.2)
         #self.shooter.set(self.stick.getRawButton(1)*0.2)
@@ -119,7 +100,7 @@ class MyRobot(wpilib.IterativeRobot):
         #self.shooter.set(self.stick.getRawButton(1)*0.2)
         #self.shooter.set(self.stick.getRawButton(2)*-0.1)
         #(2)For the above code, button 2 works, but not button 1
-        """
+        
         #self.stick = wpilib.Joystick(0)
         #self.stick = wpilib.Joystick(1)
         #Section for Mode Control
@@ -144,7 +125,7 @@ class MyRobot(wpilib.IterativeRobot):
                 self.shooter.set(0)
             #self.shooter.set(self.l_joy.getRawButton(1) or self.r_joy(1).getRawButton(1))
        # else: self.mode ==0
-        """
+        
         #self.gatherer.set(self.l_joy and self.r_joy.getRawButton(3)*1)
         if self.l_joy.getRawButton(3) or self.r_joy.getRawButton(3):
             self.shooter.set(1)
@@ -156,7 +137,7 @@ class MyRobot(wpilib.IterativeRobot):
             # Uncomment whichever line you want to use.  Need to have a shooter to use the second one.
          #   print(self.counter)
             print(self.counter, 'axis: ', self.stick.getRawAxis(2), ' pos: ', self.shooter.getPosition(), ' rpm: ', self.shooter.getSpeed())
-        """
+        
 
     def testPeriodic(self):
         """This function is called periodically during test mode."""
