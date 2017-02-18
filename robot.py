@@ -14,6 +14,7 @@ class MyRobot(wpilib.IterativeRobot):
         This function is called upon program startup and
         should be used for any initialization code.
         """
+        
         # Configure shooter motor controller.
         self.shooter = ctre.CANTalon(1) # Create a CANTalon object.
         self.shooter.setFeedbackDevice(ctre.CANTalon.FeedbackDevice.QuadEncoder) # Choose an encoder as a feedback device.  The default should be QuadEncoder already, but might as well make sure.
@@ -22,63 +23,92 @@ class MyRobot(wpilib.IterativeRobot):
         self.shooter.configEncoderCodesPerRev(48)
         # resets shooter position on startup
         self.shooter.setPosition(0)
-        self.shooter.enableBrakeMode(False) # This should change between brake and coast modes.
+        self.shooter.enableBrakeMode(False)# This should change between brake and coast modes.
+        
         
         self.l_motor = ctre.CANTalon(3)
         self.l_motor.setInverted(True)
         self.r_motor = ctre.CANTalon(2)
         self.r_motor.setInverted(True)
-        self.stick = wpilib.Joystick(0)
-        self.drive = wpilib.RobotDrive(self.l_motor, self.r_motor)
+        #self.stick = wpilib.Joystick(0)
+        self.l_joy = wpilib.Joystick(0)
+        self.r_joy = wpilib.Joystick(1)
+        #self.gatherer = wpilib.Spark(0)
+        #print (self.stick.getName())
+        self.drive = wpilib.RobotDrive(self.l_motor , self.r_motor)
         self.counter = 0
 
         #Section for Init Mode Function
         self.mode = 0
+        
 
     def autonomousInit(self):
         """This function is run once each time the robot enters autonomous mode."""
         self.auto_loop_counter = 0
         self.shooter.setPosition(0)
+    
 
     def autonomousPeriodic(self):
-        """This function is called periodically during autonomous."""
+        """This function is called periodically during autonomous.
+        Programer: Jun Hyung Lee
+        Date: 2/15/17
+        Description: This is a more updated version of the autonomous code. You're going to have to figure out what values to put in place of the 'x's.
         """
-        Programmer: Jun Hyung Lee
-        Date: 2/9/17
-        Description: The code below is unfinished, and purely experimental. Right now, it's set so that the robot drives forward and shoots
-        balls into the goal. I'm unsure whether we'll have to rotate the robot before making a shot. :\
-        """
-        self.auto_loop_counter = 0
-        #50 loops is equal to one second
-        if self.auto_loop_counter < 100:
-            self.robot_drive.drive(1, 0) #Drives forward at full speed 
+        #Rotate 90 degrees left
+        if self.auto_loop_counter < 50:
+            self.drive.drive(0.2,0)
             self.auto_loop_counter += 1
         else:
-            self.robot_drive.drive(0, 0) #Stops the robot from moving forward
-            auto_loop_counter_ = 0 
+            self.auto_loop_counter < 100
+            self.drive.drive(0, 0)
 
-        if self.auto_loop_counter <50:
-            Shoot() #Shoot() would be a pre-defined function which would fire a ball from the shooter.
+        self.auto_loop_counter += 1
+        
+        #Drive forward
+        # Check if we've completed 100 loops (approximately 2 seconds)
+        if self.auto_loop_counter < 150:
+            self.drive.drive(0.2, 0.2) 
             self.auto_loop_counter += 1
         else:
-            self.auto_loop_counter = 0
-        #break
-            #this isn't working, error says break is out of loop. Just fyi. -Hunter
-        pass
+            self.auto_loop_counter = 500
+            self.drive.drive(0, 0)
+          
+        """
+        #Shoots ball   
+        if self.auto_loop_counter < x:
+            self.shooter.set(x) #You're gonna have to tweak this a bit
+            self.auto_loop_counter += 1
+        else:
+            self.drive.drive.drive(0, 0)    #Stop robot
+            
+        #Rotate -90 degrees    
+        if self.auto_loop_counter < x:
+            self.drive.drive(0, -1.0)
+            self.auto_loop_counter += 1
+        else:
+            self.drive.drive.drive(0, 0)    #Stop robot
+
+        #Drive forward
+        if self.auto_loop_counter < x:
+            self.drive.drive(1.0, 0) 
+            self.auto_loop_counter +=1
+        else:
+             self.drive.drive(0, 0)
+             """
 
 
     def teleopInit(self):
         #resets printed shooter position on enable
         self.shooter.setPosition(0)
+        
 
     def teleopPeriodic(self):
         """This function is called periodically during operator control."""
-        #Section for Drive
         #self.drive.arcadeDrive(self.stick)
-        #self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
+       #  XBox controller: axis 1 = left Y, axis 5 = right Y
+       # self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
         """
-        #Section for Shooter
-        #Section to run the shooter at 0% to +10% full voltage, shooter axis(2), left trigger
+        # Section to run the shooter at 0% to +10% full voltage, shooter axis(2), left trigger
         #self.shooter.set(self.stick.getRawAxis(2)*0.2)
         #self.shooter.set(self.stick.getRawButton(1)*0.2)
         #Here is the code Rod wanted to have us test -Hunter
@@ -90,38 +120,48 @@ class MyRobot(wpilib.IterativeRobot):
         #self.shooter.set(self.stick.getRawButton(2)*-0.1)
         #(2)For the above code, button 2 works, but not button 1
         """
-        #For Both Attack 3 Joysticks
-        self.stick = wpilib.Joystick(0)
-        self.stick = wpilib.Joystick(1)
+        #self.stick = wpilib.Joystick(0)
+        #self.stick = wpilib.Joystick(1)
         #Section for Mode Control
         #Select=Drive mode, Start=Shoot mode
         #if self.mode ==0:
             #self.mode
-        if self.stick.getRawButton(4):
+        if self.l_joy.getRawButton(4) or self.r_joy.getRawButton(4):
             self.mode = 1
 
-        if self.stick.getRawButton(5):
+        if self.l_joy.getRawButton(5) or self.r_joy.getRawButton(5):
             self.mode = 2
 
         if self.mode == 1:
-            self.drive.tankDrive(wpilib.Joystick(0).getRawAxis(1),wpilib.Joystick(1).getRawAxis(1))
+            #self.drive.tankDrive(wpilib.Joystick(0).getRawAxis(1),wpilib.Joystick(1).getRawAxis(1))
+            self.drive.tankDrive(self.l_joy.getRawAxis(1) , self.r_joy.getRawAxis(1))
         #else: self.mode ==0
 
         if self.mode == 2:
-            self.shooter.set(self.stick.getRawButton(1)*0.2)
-        #else: self.mode ==0
-
-        #For Encoder Printing 
+            if self.l_joy.getRawButton(1) or self.r_joy.getRawButton(1):
+                self.shooter.set(1)
+            else:
+                self.shooter.set(0)
+            #self.shooter.set(self.l_joy.getRawButton(1) or self.r_joy(1).getRawButton(1))
+       # else: self.mode ==0
+        """
+        #self.gatherer.set(self.l_joy and self.r_joy.getRawButton(3)*1)
+        if self.l_joy.getRawButton(3) or self.r_joy.getRawButton(3):
+            self.shooter.set(1)
+        else:
+            self.shooter.set(0)
+        
         self.counter += 1
         if self.counter % 90 == 0:
             # Uncomment whichever line you want to use.  Need to have a shooter to use the second one.
          #   print(self.counter)
             print(self.counter, 'axis: ', self.stick.getRawAxis(2), ' pos: ', self.shooter.getPosition(), ' rpm: ', self.shooter.getSpeed())
-
+        """
 
     def testPeriodic(self):
         """This function is called periodically during test mode."""
         wpilib.LiveWindow.run()
+        
 
 
 if __name__ == "__main__":
