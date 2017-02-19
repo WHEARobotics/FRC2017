@@ -25,7 +25,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.shooter.setPosition(0)
         self.shooter.enableBrakeMode(False)# This should change between brake and coast modes.
         
-        
+
         self.l_motor = ctre.CANTalon(3)
         self.l_motor.setInverted(True)
         self.r_motor = ctre.CANTalon(2)
@@ -33,19 +33,22 @@ class MyRobot(wpilib.IterativeRobot):
         #self.stick = wpilib.Joystick(0)
         self.l_joy = wpilib.Joystick(0)
         self.r_joy = wpilib.Joystick(1)
-        #self.gatherer = wpilib.Spark(0)
-        #print (self.stick.getName())
+        self.gatherer = wpilib.Spark(0)
+        self.climber = wpilib.Spark(1)
+        self.agitator = wpilib.Jaguar(2)
+        self.loader = wpilib.Jaguar(3)
+        self.release = wpilib.Servo(4)
         self.drive = wpilib.RobotDrive(self.l_motor , self.r_motor)
         self.counter = 0
-
-        #Section for Init Mode Function
-        self.mode = 0
+        
         
 
     def autonomousInit(self):
         """This function is run once each time the robot enters autonomous mode."""
         self.auto_loop_counter = 0
         self.shooter.setPosition(0)
+        self.l_motor.enableBrakeMode(True)
+        self.r_motor.enableBrakeMode(True)
     
 
     def autonomousPeriodic(self):
@@ -81,62 +84,69 @@ class MyRobot(wpilib.IterativeRobot):
     def teleopInit(self):
         #resets printed shooter position on enable
         self.shooter.setPosition(0)
+        self.l_motor.enableBrakeMode(False)
+        self.r_motor.enableBrakeMode(False)
         
 
     def teleopPeriodic(self):
     """This function is called periodically during operator control."""
+        #This is older working code
         #self.drive.arcadeDrive(self.stick)
-       #  XBox controller: axis 1 = left Y, axis 5 = right Y
-       # self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
-        
-        # Section to run the shooter at 0% to +10% full voltage, shooter axis(2), left trigger
-        #self.shooter.set(self.stick.getRawAxis(2)*0.2)
-        #self.shooter.set(self.stick.getRawButton(1)*0.2)
-        #Here is the code Rod wanted to have us test -Hunter
-        #self.shooter.set(self.stick.getRawAxis(3)*0.2)
-        #(1)The above code works perfectly
-        #self.shooter.set((self.stick.getRawButton(1)*0.2) , (self.stick.getRawButton(2)*0.1))
-        #(2)The above code does not work
-        #self.shooter.set(self.stick.getRawButton(1)*0.2)
-        #self.shooter.set(self.stick.getRawButton(2)*-0.1)
-        #(2)For the above code, button 2 works, but not button 1
-        
+        #XBox controller: axis 1 = left Y, axis 5 = right Y
+        #self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
         #self.stick = wpilib.Joystick(0)
         #self.stick = wpilib.Joystick(1)
-        #Section for Mode Control
-        #Select=Drive mode, Start=Shoot mode
-        #if self.mode ==0:
-            #self.mode
-        if self.l_joy.getRawButton(4) or self.r_joy.getRawButton(4):
-            self.mode = 1
-
-        if self.l_joy.getRawButton(5) or self.r_joy.getRawButton(5):
-            self.mode = 2
-
-        if self.mode == 1:
-            #self.drive.tankDrive(wpilib.Joystick(0).getRawAxis(1),wpilib.Joystick(1).getRawAxis(1))
-            self.drive.tankDrive(self.l_joy.getRawAxis(1) , self.r_joy.getRawAxis(1))
-        #else: self.mode ==0
-
-        if self.mode == 2:
-            if self.l_joy.getRawButton(1) or self.r_joy.getRawButton(1):
-                self.shooter.set(1)
-            else:
-                self.shooter.set(0)
-            #self.shooter.set(self.l_joy.getRawButton(1) or self.r_joy(1).getRawButton(1))
-       # else: self.mode ==0
         
-        #self.gatherer.set(self.l_joy and self.r_joy.getRawButton(3)*1)
-        if self.l_joy.getRawButton(3) or self.r_joy.getRawButton(3):
+        #Here is the shoooter tests
+        #self.shooter.set(self.stick.getRawAxis(2)*0.2)
+        #self.shooter.set(self.stick.getRawButton(1)*0.2)
+        
+        #self.shooter.set(self.stick.getRawAxis(3)*0.2)
+
+        #self.shooter.set((self.stick.getRawButton(1)*0.2) , (self.stick.getRawButton(2)*0.1))
+        
+        #self.shooter.set(self.stick.getRawButton(1)*0.2)
+        #self.shooter.set(self.stick.getRawButton(2)*-0.1)
+        
+        
+        self.drive.tankDrive(self.l_joy.getRawAxis(1) , self.r_joy.getRawAxis(1))
+
+        if self.l_joy.getRawButton(1) or self.r_joy.getRawButton(1):
             self.shooter.set(1)
         else:
             self.shooter.set(0)
+
+        if self.l_joy.getRawButton(2) or self.r_joy.getRawButton(2):
+            self.climber.set(1)
+        else:
+            self.climber.set(0)
+
+        if self.l_joy.getRawButton(3) or self.r_joy.getRawButton(3):
+            self.gatherer.set(1)
+        else:
+            self.gatherer.set(0)
+
+        if self.l_joy.getRawButton(4) or self.r_joy.getRawButton(4):
+            self.agitator.set(1)
+        else:
+            self.agitator.set(0)
+
+        if self.l_joy.getRawButton(5) or self.r_joy.getRawButton(5):
+            self.loader.set(1)
+        else:
+            self.loader.set(0)
+
+        if self.l_joy.getRawButton(6) or self.r_joy.getRawButton(6):
+            self.release.set(1)
+        else:
+            self.release.set(0)
+        
         
         self.counter += 1
         if self.counter % 90 == 0:
             # Uncomment whichever line you want to use.  Need to have a shooter to use the second one.
-         #   print(self.counter)
-            print(self.counter, 'axis: ', self.stick.getRawAxis(2), ' pos: ', self.shooter.getPosition(), ' rpm: ', self.shooter.getSpeed())
+            print(self.counter)
+            print(self.counter, ' axis: ', self.l_joy.getRawAxis(2) and self.r_joy.getRawAxis(2), ' pos: ', self.shooter.getPosition(), ' rpm: ', self.shooter.getSpeed())
         
 
     def testPeriodic(self):
