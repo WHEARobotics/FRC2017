@@ -38,8 +38,13 @@ class MyRobot(wpilib.IterativeRobot):
         self.agitator = wpilib.Jaguar(2)
         self.loader = wpilib.Jaguar(3)
         self.release = wpilib.Servo(4)
+        self.release.set(1)
         self.drive = wpilib.RobotDrive(self.l_motor , self.r_motor)
         self.counter = 0
+        self.mode = 0
+        wpilib.CameraServer.launch()
+        #IP for camera server: http://10.38.81.101:1181/
+        
         
         
 
@@ -47,8 +52,10 @@ class MyRobot(wpilib.IterativeRobot):
         """This function is run once each time the robot enters autonomous mode."""
         self.auto_loop_counter = 0
         self.shooter.setPosition(0)
+        self.release.set(1)
         self.l_motor.enableBrakeMode(True)
         self.r_motor.enableBrakeMode(True)
+        self.agitator.set(1)
     
 
     def autonomousPeriodic(self):
@@ -74,7 +81,9 @@ class MyRobot(wpilib.IterativeRobot):
             self.drive.drive(0,0)
 
         self.auto_loop_counter +=1
-        #This counter runs 50 times a second      
+        #This counter runs 50 times a second
+
+       
             
             
             
@@ -84,38 +93,19 @@ class MyRobot(wpilib.IterativeRobot):
     def teleopInit(self):
         #resets printed shooter position on enable
         self.shooter.setPosition(0)
+        self.tele_counter = 0
+        self.auto_loop_counter = 0
+        self.release.set(1)
         self.l_motor.enableBrakeMode(False)
         self.r_motor.enableBrakeMode(False)
+        self.agitator.set(1)
         
 
     def teleopPeriodic(self):
         """This function is called periodically during operator control."""
-        #This is older working code
-        #self.drive.arcadeDrive(self.stick)
-        #XBox controller: axis 1 = left Y, axis 5 = right Y
-        #self.drive.tankDrive(self.stick.getRawAxis(1),self.stick.getRawAxis(5))
-        #self.stick = wpilib.Joystick(0)
-        #self.stick = wpilib.Joystick(1)
-        
-        #Here is the shoooter tests
-        #self.shooter.set(self.stick.getRawAxis(2)*0.2)
-        #self.shooter.set(self.stick.getRawButton(1)*0.2)
-        
-        #self.shooter.set(self.stick.getRawAxis(3)*0.2)
-
-        #self.shooter.set((self.stick.getRawButton(1)*0.2) , (self.stick.getRawButton(2)*0.1))
-        
-        #self.shooter.set(self.stick.getRawButton(1)*0.2)
-        #self.shooter.set(self.stick.getRawButton(2)*-0.1)
-        
         
         self.drive.tankDrive(self.l_joy.getRawAxis(1) , self.r_joy.getRawAxis(1))
-
-        if self.l_joy.getRawButton(1) or self.r_joy.getRawButton(1):
-            self.shooter.set(1)
-        else:
-            self.shooter.set(0)
-
+        
         if self.l_joy.getRawButton(2) or self.r_joy.getRawButton(2):
             self.climber.set(1)
         else:
@@ -125,22 +115,42 @@ class MyRobot(wpilib.IterativeRobot):
             self.gatherer.set(1)
         else:
             self.gatherer.set(0)
+            
 
-        if self.l_joy.getRawButton(4) or self.r_joy.getRawButton(4):
-            self.agitator.set(1)
+        # Pulling the trigger starts the shooting/loading process, releasing stops it.
+        if self.l_joy.getRawButton(1):
+            self.shooter.set(1)
+            self.auto_loop_counter += 1 # Setting it to nonzero starts it up; only increments when trigger held.
         else:
-            self.agitator.set(0)
+            self.auto_loop_counter = 0 # setting to zero stops below.
 
-        if self.l_joy.getRawButton(5) or self.r_joy.getRawButton(5):
-            self.loader.set(1)
-        else:
+        # Now do things based on the value of the counter.
+        if self.auto_loop_counter == 0:
+            self.shooter.set(0) # If zero, we are stopped.
             self.loader.set(0)
-
-        if self.l_joy.getRawButton(6) or self.r_joy.getRawButton(6):
-            self.release.set(1)
+        elif self.auto_loop_counter > 0 and self.auto_loop_counter <= 100:
+        # First two seconds shooter only is on.  Technically, we would only have to set when entering this condition, but this makes it clear.
+             self.shooter.set(1)
         else:
-            self.release.set(0)
+    # Executed if self.auto_loop_counter is > 100, or trigger held longer than 2 seconds.
+             self.shooter.set(1)
+             self.loader.set(1)
         
+        self.auto_loop_counter +=1
+
+
+        if self.mode == 0:
+            self.release.set(1)
+            if self.r_joy.getRawButton(1):
+                self.mode = 1
+                self.tele_counter = 0
+
+        elif self.mode == 1:
+            self.release.set(0.5)
+            if self.tele_counter < 100:
+                self.mode = 0
+
+        self.tele_counter += 1
         
         self.counter += 1
         if self.counter % 90 == 0:
