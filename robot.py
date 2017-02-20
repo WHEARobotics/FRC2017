@@ -55,23 +55,23 @@ class MyRobot(wpilib.IterativeRobot):
         """This function is called periodically during autonomous."""
         
         if self.auto_loop_counter <50:
-            self.robot_drive.drive(0,1)
+            self.drive.drive(0,1)
 
         elif self.auto_loop_counter >=50 and self.auto_loop_counter <100:
-            self.robot_drive.drive(1,1)
+            self.drive.drive(1,1)
 
         elif self.auto_loop_counter >=100 and self.auto_loop_counter <150:
-            self.shooter.set(x)
+            self.shooter.set(1)
 
         elif self.auto_loop_counter >=200 and self.auto_loop_counter <250:
-            self.robot_drive.drive(-1,-1)
+            self.drive.drive(-1,-1)
 
         #This stops the robot at 14.5 seconds
         #elif self.auto_loop_counter >=(725):
             #self.robot_drive.drive(0,0)
 
         else:
-            self.robot_drive.drive(0,0)
+            self.drive.drive(0,0)
 
         self.auto_loop_counter +=1
         #This counter runs 50 times a second      
@@ -89,7 +89,7 @@ class MyRobot(wpilib.IterativeRobot):
         
 
     def teleopPeriodic(self):
-    """This function is called periodically during operator control."""
+        """This function is called periodically during operator control."""
         #This is older working code
         #self.drive.arcadeDrive(self.stick)
         #XBox controller: axis 1 = left Y, axis 5 = right Y
