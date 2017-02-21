@@ -16,7 +16,7 @@ class MyRobot(wpilib.IterativeRobot):
         """
         
         # Configure shooter motor controller.
-        self.shooter = ctre.CANTalon(1) # Create a CANTalon object.
+        self.shooter = ctre.CANTalon(3) # Create a CANTalon object.
         self.shooter.setFeedbackDevice(ctre.CANTalon.FeedbackDevice.QuadEncoder) # Choose an encoder as a feedback device.  The default should be QuadEncoder already, but might as well make sure.
         # I thought the encoder was 20 pulses per revolution per phase, which would require "80" as an argument below, but after trying it, it looks like there are 12.
         # Setting this parameter changes things so getPosition() returns decimal revolutions, and getSpeed() returns RPM.
@@ -26,7 +26,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.shooter.enableBrakeMode(False)# This should change between brake and coast modes.
         
 
-        self.l_motor = ctre.CANTalon(3)
+        self.l_motor = ctre.CANTalon(1)
         self.l_motor.setInverted(True)
         self.r_motor = ctre.CANTalon(2)
         self.r_motor.setInverted(True)
@@ -55,7 +55,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.release.set(1)
         self.l_motor.enableBrakeMode(True)
         self.r_motor.enableBrakeMode(True)
-        self.agitator.set(1)
+        self.agitator.set(-0.7)
     
 
     def autonomousPeriodic(self):
@@ -98,7 +98,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.release.set(1)
         self.l_motor.enableBrakeMode(False)
         self.r_motor.enableBrakeMode(False)
-        self.agitator.set(1)
+        self.agitator.set(-0.7)
         
 
     def teleopPeriodic(self):
@@ -112,7 +112,7 @@ class MyRobot(wpilib.IterativeRobot):
             self.climber.set(0)
 
         if self.l_joy.getRawButton(3) or self.r_joy.getRawButton(3):
-            self.gatherer.set(1)
+            self.gatherer.set(-0.5)
         else:
             self.gatherer.set(0)
             
@@ -132,13 +132,13 @@ class MyRobot(wpilib.IterativeRobot):
         # First two seconds shooter only is on.  Technically, we would only have to set when entering this condition, but this makes it clear.
              self.shooter.set(1)
         else:
-    # Executed if self.auto_loop_counter is > 100, or trigger held longer than 2 seconds.
+        # Executed if self.auto_loop_counter is > 100, or trigger held longer than 2 seconds.
              self.shooter.set(1)
-             self.loader.set(1)
+             self.loader.set(0.5)
         
         self.auto_loop_counter +=1
 
-
+        """
         if self.mode == 0:
             self.release.set(1)
             if self.r_joy.getRawButton(1):
@@ -151,6 +151,7 @@ class MyRobot(wpilib.IterativeRobot):
                 self.mode = 0
 
         self.tele_counter += 1
+        """
         
         self.counter += 1
         if self.counter % 90 == 0:
