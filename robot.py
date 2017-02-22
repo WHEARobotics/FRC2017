@@ -30,6 +30,18 @@ class MyRobot(wpilib.IterativeRobot):
         self.l_motor.setInverted(True)
         self.r_motor = ctre.CANTalon(2)
         self.r_motor.setInverted(True)
+        # Configure shooter motor controller.
+         # Create a CANTalon object.
+        self.l_motor.setFeedbackDevice(ctre.CANTalon.FeedbackDevice.QuadEncoder)
+        self.r_motor.setFeedbackDevice(ctre.CANTalon.FeedbackDevice.QuadEncoder)# Choose an encoder as a feedback device.  The default should be QuadEncoder already, but might as well make sure.
+        # I thought the encoder was 20 pulses per revolution per phase, which would require "80" as an argument below, but after trying it, it looks like there are 12.
+        # Setting this parameter changes things so getPosition() returns decimal revolutions, and getSpeed() returns RPM.
+        self.l_motor.configEncoderCodesPerRev(48)
+        self.r_motor.configEncoderCodesPerRev(48)
+        # resets shooter position on startup
+        self.l_motor.setPosition(0)
+        self.r_motor.setPosition(0)
+
         #self.stick = wpilib.Joystick(0)
         self.l_joy = wpilib.Joystick(0)
         self.r_joy = wpilib.Joystick(1)
@@ -42,7 +54,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.drive = wpilib.RobotDrive(self.l_motor , self.r_motor)
         self.counter = 0
         self.mode = 0
-        wpilib.CameraServer.launch()
+        #wpilib.CameraServer.launch()
         #IP for camera server: http://10.38.81.101:1181/
         
         
@@ -52,6 +64,8 @@ class MyRobot(wpilib.IterativeRobot):
         """This function is run once each time the robot enters autonomous mode."""
         self.auto_loop_counter = 0
         self.shooter.setPosition(0)
+        self.l_motor.setPosition(0)
+        self.r_motor.setPosition(0)
         self.release.set(1)
         self.l_motor.enableBrakeMode(True)
         self.r_motor.enableBrakeMode(True)
@@ -60,6 +74,24 @@ class MyRobot(wpilib.IterativeRobot):
 
     def autonomousPeriodic(self):
         """This function is called periodically during autonomous."""
+        """
+        #Rotates
+        if self.auto_loop_counter <34:
+            self.drive.drive(-0.5,-1)
+        """
+        if self.r_motor.getPosition()> -2000 and self.auto_loop_counter <200:
+            self.drive.drive(-0.5,0)
+
+        else:
+            self.drive.drive(0,0)
+        """
+        if self.auto_loop_counter <100:
+            self.drive.drive(-0.5,0)
+        
+        #Drives
+        elif self.auto_loop_counter >=100 and self.auto_loop_counter <150:
+            self.drive.drive(1,0)
+
         
         if self.auto_loop_counter <50:
             self.drive.drive(0,1)
@@ -72,15 +104,19 @@ class MyRobot(wpilib.IterativeRobot):
 
         elif self.auto_loop_counter >=200 and self.auto_loop_counter <250:
             self.drive.drive(-1,-1)
-
+        """
         #This stops the robot at 14.5 seconds
         #elif self.auto_loop_counter >=(725):
             #self.robot_drive.drive(0,0)
-
+        """
         else:
             self.drive.drive(0,0)
-
+        """
         self.auto_loop_counter +=1
+
+        if self.auto_loop_counter % 50 == 0:
+            # Uncomment whichever line you want to use.  Need to have a shooter to use the second one.
+            print(self.auto_loop_counter, ' pos: ', self.l_motor.getPosition() , self.r_motor.getPosition())
         #This counter runs 50 times a second
 
        
@@ -93,6 +129,8 @@ class MyRobot(wpilib.IterativeRobot):
     def teleopInit(self):
         #resets printed shooter position on enable
         self.shooter.setPosition(0)
+        self.l_motor.setPosition(0)
+        self.r_motor.setPosition(0)
         self.tele_counter = 0
         self.auto_loop_counter = 0
         self.release.set(1)
@@ -156,9 +194,13 @@ class MyRobot(wpilib.IterativeRobot):
         self.counter += 1
         if self.counter % 90 == 0:
             # Uncomment whichever line you want to use.  Need to have a shooter to use the second one.
+            print(self.counter, ' pos: ', self.l_motor.getPosition() , self.r_motor.getPosition())
+            
+
+            """
             print(self.counter)
             print(self.counter, ' axis: ', self.l_joy.getRawAxis(2) and self.r_joy.getRawAxis(2), ' pos: ', self.shooter.getPosition(), ' rpm: ', self.shooter.getSpeed())
-        
+            """
 
     def testPeriodic(self):
         """This function is called periodically during test mode."""
