@@ -14,6 +14,13 @@ class MyRobot(wpilib.IterativeRobot):
         This function is called upon program startup and
         should be used for any initialization code.
         """
+
+        """
+        Button Map for Dual Joysticks:
+        1: Shooter + Loader (Hold for 1 second)
+        2: Climber
+        3: Gatherer
+        """
         
         # Configure shooter motor controller.
         self.shooter = ctre.CANTalon(3) # Create a CANTalon object.
@@ -45,12 +52,10 @@ class MyRobot(wpilib.IterativeRobot):
         #self.stick = wpilib.Joystick(0)
         self.l_joy = wpilib.Joystick(0)
         self.r_joy = wpilib.Joystick(1)
-        self.gatherer = wpilib.Spark(0)
-        self.climber = wpilib.Spark(1)
+        self.climb = wpilib.Spark(0)
+        self.gatherer = wpilib.Spark(1)
         self.agitator = wpilib.Jaguar(2)
         self.loader = wpilib.Jaguar(3)
-        self.release = wpilib.Servo(4)
-        self.release.set(1)
         self.drive = wpilib.RobotDrive(self.l_motor , self.r_motor)
         self.counter = 0
         self.mode = 0
@@ -66,10 +71,9 @@ class MyRobot(wpilib.IterativeRobot):
         self.shooter.setPosition(0)
         self.l_motor.setPosition(0)
         self.r_motor.setPosition(0)
-        self.release.set(1)
         self.l_motor.enableBrakeMode(True)
         self.r_motor.enableBrakeMode(True)
-        self.agitator.set(-0.7)
+        self.agitator.set(0.7)
     
 
     def autonomousPeriodic(self):
@@ -79,8 +83,8 @@ class MyRobot(wpilib.IterativeRobot):
         if self.auto_loop_counter <34:
             self.drive.drive(-0.5,-1)
         """
-        if self.r_motor.getPosition()> -2000 and self.auto_loop_counter <200:
-            self.drive.drive(-0.5,0)
+        if self.r_motor.getPosition()> -4000 and self.auto_loop_counter <800:
+            self.drive.drive(-1,0)
 
         else:
             self.drive.drive(0,0)
@@ -89,7 +93,7 @@ class MyRobot(wpilib.IterativeRobot):
             self.drive.drive(-0.5,0)
         
         #Drives
-        elif self.auto_loop_counter >=100 and self.auto_loop_counter <150:
+        if self.auto_loop_counter >=100 and self.auto_loop_counter <300:
             self.drive.drive(1,0)
 
         
@@ -104,13 +108,14 @@ class MyRobot(wpilib.IterativeRobot):
 
         elif self.auto_loop_counter >=200 and self.auto_loop_counter <250:
             self.drive.drive(-1,-1)
-        """
+        
         #This stops the robot at 14.5 seconds
         #elif self.auto_loop_counter >=(725):
             #self.robot_drive.drive(0,0)
-        """
+        
         else:
             self.drive.drive(0,0)
+        
         """
         self.auto_loop_counter +=1
 
@@ -118,6 +123,7 @@ class MyRobot(wpilib.IterativeRobot):
             # Uncomment whichever line you want to use.  Need to have a shooter to use the second one.
             print(self.auto_loop_counter, ' pos: ', self.l_motor.getPosition() , self.r_motor.getPosition())
         #This counter runs 50 times a second
+        
 
        
             
@@ -133,10 +139,9 @@ class MyRobot(wpilib.IterativeRobot):
         self.r_motor.setPosition(0)
         self.tele_counter = 0
         self.auto_loop_counter = 0
-        self.release.set(1)
         self.l_motor.enableBrakeMode(False)
         self.r_motor.enableBrakeMode(False)
-        self.agitator.set(-0.7)
+        self.agitator.set(0.7)
         
 
     def teleopPeriodic(self):
@@ -144,15 +149,15 @@ class MyRobot(wpilib.IterativeRobot):
         
         self.drive.tankDrive(self.l_joy.getRawAxis(1) , self.r_joy.getRawAxis(1))
         
-        if self.l_joy.getRawButton(2) or self.r_joy.getRawButton(2):
-            self.climber.set(1)
-        else:
-            self.climber.set(0)
-
         if self.l_joy.getRawButton(3) or self.r_joy.getRawButton(3):
-            self.gatherer.set(-0.5)
+            self.gatherer.set(-1)
         else:
             self.gatherer.set(0)
+
+        if self.l_joy.getRawButton(2) or self.r_joy.getRawButton(2):
+            self.climb.set(1)
+        else:
+            self.climb.set(0)
             
 
         # Pulling the trigger starts the shooting/loading process, releasing stops it.
@@ -166,13 +171,13 @@ class MyRobot(wpilib.IterativeRobot):
         if self.auto_loop_counter == 0:
             self.shooter.set(0) # If zero, we are stopped.
             self.loader.set(0)
-        elif self.auto_loop_counter > 0 and self.auto_loop_counter <= 100:
-        # First two seconds shooter only is on.  Technically, we would only have to set when entering this condition, but this makes it clear.
+        elif self.auto_loop_counter > 0 and self.auto_loop_counter <= 50:
+        # For one second the shooter is only on.  Technically, we would only have to set when entering this condition, but this makes it clear.
              self.shooter.set(1)
         else:
-        # Executed if self.auto_loop_counter is > 100, or trigger held longer than 2 seconds.
+        # Executed if self.auto_loop_counter is > 100, or trigger held longer than 1 second.
              self.shooter.set(1)
-             self.loader.set(0.5)
+             self.loader.set(0.7)
         
         self.auto_loop_counter +=1
 
